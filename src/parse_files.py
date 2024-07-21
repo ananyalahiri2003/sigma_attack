@@ -5,10 +5,14 @@ import click
 
 
 @click.command()
+# @click.option("--input-dir",
+#               type=str, default="/Users/ananya.lahiri/sigma/rules/windows", help="Path to data directory")
+# @click.option("--output-dir",
+#               type=str, default="/Users/ananya.lahiri/output_sigma/rules/windows", help="Path to output directory")
 @click.option("--input-dir",
               type=str, default="/Users/ananya.lahiri/sigma/rules/windows/driver_load", help="Path to data directory")
 @click.option("--output-dir",
-              type=str, default="/Users/ananya.lahiri/output_sigma/rules/windows/driver_load", help="Path to output directory")
+              type=str, default="/Users/ananya.lahiri/output_sigma/temp/rules/windows/driver_load", help="Path to output directory")
 def parse_yaml_files(
         input_dir: str,
         output_dir: str,
@@ -17,7 +21,7 @@ def parse_yaml_files(
     Path(output_dir).mkdir(exist_ok=True, parents=True)
     print(f"Created {output_dir=}")
     # Input directory loop through
-    files = [fl for fl in Path(input_dir).glob('*.yml')]
+    files = [fl for fl in Path(input_dir).rglob('*.yml')]
     print(f"files:\n{files}")
 
     for file_path in files:
