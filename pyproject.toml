@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "SigmaProject"
+name = "sigma_attack"
 version = "0.1.0"
 description = ""
 authors = ["Ananya <ananyalahiri2003@yahoo.co.uk>"]
