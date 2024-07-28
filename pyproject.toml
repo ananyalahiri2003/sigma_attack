@@ -30,6 +30,8 @@ threadpoolctl = "3.5.0"
 tzdata = "2024.1"
 urllib3 = "2.2.2"
 pytest = "^8.3.2"
+transformers = "^4.43.3"
+torch = "2.0.1"
 
 
 [build-system]
