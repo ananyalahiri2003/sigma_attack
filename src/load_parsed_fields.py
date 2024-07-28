@@ -26,11 +26,6 @@ def extract_data_points(parsed_list, fields):
     extracted = []
     for datum in parsed_list:
         record = {}
-        for field in fields:
-            if field in datum:
-                record[field] = datum[field]
-            else:
-                record[field] = None
         try:
             description = datum["description"]
             falsepositives = datum["falsepositives"]
@@ -39,6 +34,14 @@ def extract_data_points(parsed_list, fields):
             record['text'] = combined
         except Exception as e:
             print(f"Could not created combined text: {e}")
+            continue
+
+        for field in fields:
+            if field in datum:
+                record[field] = datum[field]
+            else:
+                record[field] = None
+
         extracted.append(record)
     return extracted
 
