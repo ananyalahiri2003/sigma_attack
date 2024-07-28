@@ -36,8 +36,6 @@ def parse_yaml_files(
         schema = response.json()
     except requests.exceptions.RequestException as e:
         raise ValueError(f"Failed to fetch schema: {e}")
-    # with open(schema_file, 'r') as f:
-    #     schema = json.load(f)
 
     tag_dis = {}
 
@@ -80,9 +78,14 @@ def parse_yaml_files(
             json.dump(parsed_data, filep, indent=4)
         print(f"Processed and saved")
 
-        print("Tag distn statistics...")
-        for tag, count in tag_dis.items():
-            print(f"{tag=}: {count=}")
+    tags_dist_filepath = Path(output_dir) / "tag_distribution.json"
+    with open(tags_dist_filepath, 'w') as f:
+        json.dump(tag_dis, f, indent=4)
+    print(f"Tag dists saved under {tags_dist_filepath}")
+
+    print("Tag distn statistics...")
+    for tag, count in tag_dis.items():
+        print(f"{tag=}: {count=}")
 
 
 if __name__ == "__main__":
