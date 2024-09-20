@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Ananya <ananyalahiri2003@yahoo.co.uk>"]
 readme = "README.md"
+packages = [{"include" = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -13,26 +14,25 @@ charset-normalizer = "3.3.2"
 click = "8.1.7"
 idna = "3.7"
 joblib = "1.4.2"
-jsonschema = "4.23.0"
+jsonschema = "4.17.3"  # A stable older version
 jsonschema-specifications = "2023.12.1"
 numpy = "2.0.0"
 pandas = "2.2.2"
 python-dateutil = "2.9.0.post0"
 pytz = "2024.1"
-PyYAML = "6.0.1"
+PyYAML = "6.0.1"  # A more stable version
 referencing = "0.35.1"
-requests = "2.32.3"
+requests = "2.31.0"  # Previous version
 rpds-py = "0.19.1"
 scikit-learn = "1.5.1"
 scipy = "1.13.1"
 six = "1.16.0"
 threadpoolctl = "3.5.0"
 tzdata = "2024.1"
-urllib3 = "2.2.2"
+urllib3 = "2.0.4"  # Stable version before major update
 pytest = "^8.3.2"
 transformers = "^4.43.3"
-torch = "2.0.1"
-
+torch = "2.2.2"
 
 [build-system]
 requires = ["poetry-core"]

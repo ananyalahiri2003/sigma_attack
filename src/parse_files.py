@@ -12,9 +12,9 @@ from jsonschema import validate, ValidationError
 # @click.option("--output-dir",
 #               type=str, default="/Users/ananya.lahiri/output_sigma/rules/windows", help="Path to output directory")
 @click.option("--input-dir",
-              type=str, default="/Users/ananya.lahiri/sigma/rules/windows/driver_load", help="Path to data directory")
+              type=str, default="/Users/ananyalahiri2003/sigma/rules/windows", help="Path to data directory")
 @click.option("--output-dir",
-              type=str, default="/Users/ananya.lahiri/output_sigma/temp/rules/windows/driver_load", help="Path to output directory")
+              type=str, default="/Users/ananyalahiri2003/output_sigma/temp/rules/windows/driver_load", help="Path to output directory")
 @click.option("--schema-url",
               type=str,
               default="https://raw.githubusercontent.com/SigmaHQ/sigma/master/tests/validate-sigma-schema/sigma-schema.json",
