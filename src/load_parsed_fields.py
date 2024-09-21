@@ -1,7 +1,9 @@
 import json
 import click
 import re
+import pandas as pd
 from pathlib import Path
+from typing import List
 
 
 def load_parsed_data(input_dir):
@@ -27,13 +29,15 @@ def extract_data_points(parsed_list, fields):
     for datum in parsed_list:
         record = {}
         try:
-            description = datum["description"]
-            falsepositives = datum["falsepositives"]
-            combined = f"{description} {falsepositives}"
+            combined = datum["description"]
+            if 'falsepositives' in datum:
+                combined = f"{combined} {datum['falsepositives']}"
+
             combined = clean_text(combined)
             record['text'] = combined
         except Exception as e:
             print(f"Could not created combined text: {e}")
+            print(f"Without description {datum=}")
             continue
 
         for field in fields:
@@ -43,14 +47,13 @@ def extract_data_points(parsed_list, fields):
                 record[field] = None
 
         extracted.append(record)
+
     return extracted
 
 
 def save_extracted_data(extracted_data, output_dir, output_file_name="extracted_data.json"):
-    output_dir = Path(output_dir).resolve()
-    print(f"Resolved output directory: {output_dir}")
-    output_dir.mkdir(exist_ok=True, parents=True)
-    output_file = output_dir / output_file_name
+    Path(output_dir).mkdir(exist_ok=True, parents=True)
+    output_file = Path(output_dir) / output_file_name
     try:
         with open(output_file, 'w') as f:
             json.dump(extracted_data, f, indent=4)
@@ -59,10 +62,18 @@ def save_extracted_data(extracted_data, output_dir, output_file_name="extracted_
         raise ValueError(f"Could not save file: {e}")
 
 
+def get_dataframe(extracted_data):
+    df = pd.DataFrame(extracted_data)
+    df_logsource = pd.json_normalize(df['logsource'])
+    df_detection= pd.json_normalize(df['detection'])
+    df = pd.concat([df.drop(['logsource', 'detection'], axis=1), df_logsource, df_detection], axis=1)
+    return df
+
+
 @click.command()
 @click.option("--input-dir",
               type=str,
-              default="/Users/ananya.lahiri/output_sigma/rules/windows/driver_load",
+              default="/Users/ananyalahiri/output_sigma/temp/rules/windows",
               help="Input data directory"
               )
 @click.option("--fields-to-extract",
@@ -73,14 +84,18 @@ def save_extracted_data(extracted_data, output_dir, output_file_name="extracted_
               )
 @click.option("--output-dir",
               type=str,
-              default="Users/ananya.lahiri/output_sigma/selected_fields_driver_load/rules/windows/driver_load",
+              default="Users/ananyalahiri/output_sigma/selected_fields_driver_load/rules/windows",
               help="Output directory")
+@click.option("--output-file-name",
+              type=str,
+              default="extracted_data.csv",
+              help="Name of output csv file")
 def extract_data(input_dir,
                  fields_to_extract,
-                 output_dir):
+                 output_dir,
+                 output_file_name):
 
-    output_dir = Path(output_dir).resolve()
-    output_dir.mkdir(exist_ok=True, parents=True)
+    Path(output_dir).mkdir(exist_ok=True, parents=True)
 
     try:
         parsed_data_list = load_parsed_data(input_dir)
@@ -89,9 +104,14 @@ def extract_data(input_dir,
 
     fields_to_extract = list(fields_to_extract)
     print(f"{fields_to_extract=}")
-    extracted_data = extract_data_points(parsed_data_list, fields_to_extract)
+    extracted_data = extract_data_points(parsed_data_list, fields_to_extract) # At this stage we are still dealing with json data
 
-    save_extracted_data(extracted_data, output_dir)
+    df = get_dataframe(extracted_data)
+
+    # save_extracted_data(df, output_dir)
+    output_filename = Path(output_dir)/output_file_name
+    df.to_csv(output_filename, index=False)
+    print(f"saved file under {output_filename}")
 
 
 if __name__ == "__main__":
