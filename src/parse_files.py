@@ -2,19 +2,20 @@ from pathlib import Path
 import yaml
 import json
 import click
+import datetime
 import requests
 from jsonschema import validate, ValidationError
 
 
 @click.command()
 # @click.option("--input-dir",
-#               type=str, default="/Users/ananya.lahiri/sigma/rules/windows", help="Path to data directory")
+#               type=str, default="/Users/ananyalahiri/sigma_attack_windows/sigma/rules/windows/driver_load", help="Path to data directory")
 # @click.option("--output-dir",
-#               type=str, default="/Users/ananya.lahiri/output_sigma/rules/windows", help="Path to output directory")
+#               type=str, default="/Users/ananyalahiri/output_sigma/temp/rules/windows/driver_load", help="Path to output directory")
 @click.option("--input-dir",
-              type=str, default="/Users/ananyalahiri2003/sigma/rules/windows", help="Path to data directory")
+              type=str, default="/Users/ananyalahiri/sigma_attack_windows/sigma/rules/windows", help="Path to data directory")
 @click.option("--output-dir",
-              type=str, default="/Users/ananyalahiri2003/output_sigma/temp/rules/windows/driver_load", help="Path to output directory")
+              type=str, default="/Users/ananyalahiri/output_sigma/temp/rules/windows", help="Path to output directory")
 @click.option("--schema-url",
               type=str,
               default="https://raw.githubusercontent.com/SigmaHQ/sigma/master/tests/validate-sigma-schema/sigma-schema.json",
@@ -24,7 +25,7 @@ def parse_yaml_files(
         input_dir: str,
         output_dir: str,
         schema_url: str,
-        reputation_threshold: int,
+        reputation_threshold: int = 0,
 ):
     print("Starting")
     Path(output_dir).mkdir(exist_ok=True, parents=True)
@@ -50,6 +51,10 @@ def parse_yaml_files(
             except yaml.YAMLError as e:
                 print(f"Error parsing file {file_path}: {e}")
                 continue
+
+            for fld in ['date', 'modified']:
+                if fld in parsed_data and isinstance(parsed_data[fld], (datetime.date, datetime.datetime)):
+                    parsed_data[fld] = parsed_data[fld].isoformat()
 
         # Validate against the schema
         try:
