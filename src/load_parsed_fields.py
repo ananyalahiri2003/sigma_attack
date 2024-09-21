@@ -16,6 +16,14 @@ def load_parsed_data(input_dir):
     return parsed_list
 
 
+def truncate_tag(tag):
+    if '.' in tag:
+        parts = tag.split('.')
+        if len(parts) > 2:
+            return '.'.join(parts[:2])  # Keep only the first two components
+    return tag
+
+
 # Function to clean text
 def clean_text(text):
     text = text.lower()
@@ -41,7 +49,9 @@ def extract_data_points(parsed_list, fields):
             continue
 
         for field in fields:
-            if field in datum:
+            if field == "tags" and field in datum:
+                record[field] = [truncate_tag(tag) for tag in datum[field]]
+            elif field in datum:
                 record[field] = datum[field]
             else:
                 record[field] = None
@@ -80,7 +90,7 @@ def get_dataframe(extracted_data):
               type=str,
               required=True,
               multiple=True,
-              help="Fields to extract"
+              help="Fields to extract - I extract title, description, falsepositives, logsource, detection, tags"
               )
 @click.option("--output-dir",
               type=str,
